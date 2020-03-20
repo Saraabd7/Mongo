@@ -1,0 +1,72 @@
+# # # Install required plugins
+# # required_plugins = ["vagrant-hostsupdater"]
+# # required_plugins.each do |plugin|
+# #     exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+# # end
+#
+# # Install required plugins
+required_plugins = ["vagrant-hostsupdater"]
+required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+end
+
+Vagrant.configure("2") do |config|
+  config.vm.define "app" do |app|
+    app.vm.box = "ubuntu/xenial64"
+    app.vm.network "private_network", ip: "192.168.10.100"
+    app.hostsupdater.aliases = ["development.local"]
+    app.vm.synced_folder "app", "/home/ubuntu/app"
+    app.vm.provision "shell", path: "environment/app/provision.sh", privileged: false
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "ubuntu/xenial64"
+    db.vm.network "private_network", ip: "192.168.10.150"
+    db.hostsupdater.aliases = ["database.local"]
+    db.vm.provision "shell", path: "environment/db/provision.sh", privileged: false
+
+
+  end
+end
+#
+# # Install required plugins
+# required_plugins = ["vagrant-hostsupdater"]
+# required_plugins.each do |plugin|
+#     exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+# end
+#
+# Vagrant.configure("2") do |config|
+#   config.vm.define "app" do |app|
+#     app.vm.box = "ubuntu/xenial64"
+#     app.vm.network "private_network", ip: "192.168.10.100"
+#     app.hostsupdater.aliases = ["development.local"]
+#     app.vm.synced_folder "app", "/home/ubuntu/app"
+#     app.vm.provision "shell", path: "environment/app/provision.sh", privileged: false
+#   end
+#
+# #   config.vm.define "db" do |app|
+# #     # change place holder to be db
+# #     # change each line to call .vm on db placeholder
+# #     app.vm.box = "ubuntu/xenial64"
+# #     # install the version of ubuntu that the db likes
+# #
+# #     # networking for the right port
+# #     app.vm.network "private_network", ip: "192.168.10.100"
+# #     app.hostsupdater.aliases = ["development.local"]
+# #     app.vm.synced_folder "app", "/home/ubuntu/app"
+# #
+# #     # send files that db needs not app
+# #     app.vm.provision "shell", path: "environment/app/provision.sh", privileged: false
+# # #     # send the proivision that is appropriate for the app
+# #   end
+#
+# end
+#
+#
+# Vagrant.configure("2") do |config|
+#     config.vm.box = "ubuntu/xenial64"
+#     config.vm.network "private_network", ip: "192.168.10.150"
+#     config.hostsupdater.aliases = ["database.local"]
+#     config.vm.synced_folder "environment/db", "/home/ubuntu/environment/"
+#     config.vm.provision "shell", path: "environment/db/provision.sh", privileged: false
+# end
